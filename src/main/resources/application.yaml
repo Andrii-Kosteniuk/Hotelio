@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: hotelio
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hotelio_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
