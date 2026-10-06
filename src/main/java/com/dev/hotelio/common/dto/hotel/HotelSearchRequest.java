@@ -1,9 +1,8 @@
-package com.hotelio.common.dto;
+package com.dev.hotelio.common.dto.hotel;
 
+import com.dev.hotelio.room.domain.RoomType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-
-import java.math.BigDecimal;
 
 public record HotelSearchRequest(
         String city,
@@ -11,8 +10,8 @@ public record HotelSearchRequest(
         String name,
         @Min(1) @Max(5) Integer minStarRating,
         @Min(1) @Max(5) Integer maxStarRating,
-        BigDecimal minPrice,
-        BigDecimal maxPrice
-
+        RoomType roomType,
+        Integer roomCapacity,
+        Integer bedCount
 ) {
 }
