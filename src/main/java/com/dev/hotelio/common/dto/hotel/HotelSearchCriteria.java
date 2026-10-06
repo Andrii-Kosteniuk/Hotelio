@@ -1,6 +1,7 @@
-package com.hotelio.common.dto;
+package com.dev.hotelio.common.dto.hotel;
 
-import java.math.BigDecimal;
+
+import com.dev.hotelio.room.domain.RoomType;
 
 public record HotelSearchCriteria(
 
@@ -9,8 +10,9 @@ public record HotelSearchCriteria(
         String name,
         Integer minStarRating,
         Integer maxStarRating,
-        BigDecimal minPrice,
-        BigDecimal maxPrice
+        RoomType roomType,
+        Integer roomCapacity,
+        Integer bedCount
 ) {
 }
 
