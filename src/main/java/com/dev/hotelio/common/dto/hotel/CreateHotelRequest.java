@@ -1,9 +1,7 @@
-package com.hotelio.common.dto;
+package com.dev.hotelio.common.dto.hotel;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-
-import java.math.BigDecimal;
 
 public record CreateHotelRequest(
 
@@ -16,16 +14,12 @@ public record CreateHotelRequest(
 
         @NotNull
         @Valid
-        AddressRequest address,
+        HotelAddressRequest address,
 
         @NotNull
         @Min(1)
         @Max(5)
-        Integer starRating,
-
-        @NotNull
-        @DecimalMin("0.00")
-        BigDecimal pricePerNight
+        Integer starRating
 
 ) {
 }
