@@ -7,7 +7,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.1.1</version>
     </parent>
-    <groupId>com.hotelio</groupId>
+    <groupId>com.dev.hotelio</groupId>
     <artifactId>Hotelio</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>hotelio</name>
