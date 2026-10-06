@@ -1,11 +1,11 @@
-package com.hotelio.hotel.controller;
+package com.dev.hotelio.hotel.controller;
 
 
-import com.hotelio.common.dto.CreateHotelRequest;
-import com.hotelio.common.dto.HotelResponse;
-import com.hotelio.common.dto.HotelSearchRequest;
-import com.hotelio.common.dto.PageResponse;
-import com.hotelio.hotel.service.HotelService;
+import com.dev.hotelio.common.dto.hotel.CreateHotelRequest;
+import com.dev.hotelio.common.dto.hotel.HotelResponse;
+import com.dev.hotelio.common.dto.hotel.HotelSearchRequest;
+import com.dev.hotelio.common.dto.PageResponse;
+import com.dev.hotelio.hotel.service.HotelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -36,20 +36,15 @@ public class HotelController {
     }
 
     @GetMapping
-    public PageResponse<HotelResponse> getHotels(Pageable pageable) {
-        return hotelService.getActiveHotels(pageable);
-    }
-
-    @GetMapping("/search")
-    public PageResponse<HotelResponse> searchHotels(
-            @Valid @ModelAttribute HotelSearchRequest request,
-            @PageableDefault(
-                    size = 20,
-                    sort = "pricePerNight",
-                    direction = Sort.Direction.ASC
-            ) Pageable pageable
+    public ResponseEntity<PageResponse<HotelResponse>> getHotels(@Valid @ModelAttribute HotelSearchRequest request,
+                                                                 @PageableDefault(
+                                                                         size = 20,
+                                                                         sort = "name",
+                                                                         direction = Sort.Direction.ASC
+                                                                 ) Pageable pageable
     ) {
-        return hotelService.searchHotels(request, pageable);
+        return ResponseEntity.ok(hotelService.getHotels(request, pageable));
 
     }
+
 }
