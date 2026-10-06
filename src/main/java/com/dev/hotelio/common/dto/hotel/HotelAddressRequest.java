@@ -1,11 +1,11 @@
-package com.hotelio.common.dto;
+package com.dev.hotelio.common.dto.hotel;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-public record AddressRequest(
+public record HotelAddressRequest(
         @NotBlank
         @Size(max = 100)
         String country,
