@@ -1,17 +1,19 @@
-package com.hotelio.hotel.domain;
+package com.dev.hotelio.hotel.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.UUID;
 
 @Entity
-@Table(name = "hotels")
+@Table(name = "hotels",
+        indexes = {
+                @Index(name = "idx_hotel_name", columnList = "hotel_name")
+        })
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -33,9 +35,6 @@ public class Hotel {
 
     @Column(name = "star_rating", nullable = false)
     private Integer starRating;
-
-    @Column(name = "price_per_night", nullable = false, precision = 10, scale = 2)
-    private BigDecimal pricePerNight;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
@@ -59,13 +58,12 @@ public class Hotel {
     private Long version;
 
 
-    public static Hotel createNew(String name, String description, Address address, Integer starRating, BigDecimal pricePerNight) {
+    public static Hotel createNew(String name, String description, Address address, Integer starRating) {
         return Hotel.builder()
                 .name(name)
                 .description(description)
                 .address(address)
                 .starRating(starRating)
-                .pricePerNight(pricePerNight)
                 .status(HotelStatus.PENDING_REVIEW)
                 .createdAt(OffsetDateTime.now(ZoneId.systemDefault()))
                 .build();
