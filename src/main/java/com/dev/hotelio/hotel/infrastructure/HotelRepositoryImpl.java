@@ -1,9 +1,9 @@
-package com.hotelio.hotel.infrastructure;
+package com.dev.hotelio.hotel.infrastructure;
 
-import com.hotelio.common.dto.HotelSearchCriteria;
-import com.hotelio.hotel.domain.Hotel;
-import com.hotelio.hotel.repository.HotelRepository;
-import com.hotelio.hotel.domain.HotelStatus;
+import com.dev.hotelio.common.dto.hotel.HotelSearchCriteria;
+import com.dev.hotelio.hotel.domain.Hotel;
+import com.dev.hotelio.hotel.domain.HotelStatus;
+import com.dev.hotelio.hotel.repository.HotelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -26,11 +26,6 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public Page<Hotel> findActiveHotels(Pageable pageable) {
-        return repository.findByStatus(HotelStatus.ACTIVE, pageable);
-    }
-
-    @Override
     public Hotel save(Hotel hotel) {
         return repository.save(hotel);
     }
@@ -41,7 +36,7 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public Page<Hotel> search(HotelSearchCriteria criteria, Pageable pageable) {
+    public Page<Hotel> findAllHotels(HotelSearchCriteria criteria, Pageable pageable) {
 
         Specification<Hotel> specification = HotelSpecifications.hasStatus(HotelStatus.ACTIVE);
 
@@ -76,23 +71,29 @@ public class HotelRepositoryImpl implements HotelRepository {
                     )
             );
         }
-
-        if (criteria.minPrice() != null) {
+        if (criteria.roomType() != null) {
             specification = specification.and(
-                    HotelSpecifications.minPrice(
-                            criteria.minPrice()
+                    HotelSpecifications.hasRoomType(
+                            criteria.roomType()
                     )
             );
         }
 
-        if (criteria.maxPrice() != null) {
+        if (criteria.roomCapacity() != null) {
             specification = specification.and(
-                    HotelSpecifications.maxPrice(
-                            criteria.maxPrice()
+                    HotelSpecifications.hasRoomCapacity(
+                            criteria.roomCapacity()
                     )
             );
         }
 
+        if (criteria.bedCount() != null) {
+            specification = specification.and(
+                    HotelSpecifications.hasBedCount(
+                            criteria.bedCount()
+                    )
+            );
+        }
 
         return repository.findAll(specification, pageable);
     }
