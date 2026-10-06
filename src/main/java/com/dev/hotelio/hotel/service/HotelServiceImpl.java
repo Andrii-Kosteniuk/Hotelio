@@ -1,11 +1,13 @@
-package com.hotelio.hotel.service;
+package com.dev.hotelio.hotel.service;
 
-import com.hotelio.common.dto.*;
-import com.hotelio.common.exception.ResourceAlreadyExistsException;
-import com.hotelio.common.exception.ResourceNotFoundException;
-import com.hotelio.common.mapper.HotelMapper;
-import com.hotelio.hotel.domain.Hotel;
-import com.hotelio.hotel.repository.HotelRepository;
+
+import com.dev.hotelio.common.dto.PageResponse;
+import com.dev.hotelio.common.dto.hotel.*;
+import com.dev.hotelio.common.exception.ResourceAlreadyExistsException;
+import com.dev.hotelio.common.exception.ResourceNotFoundException;
+import com.dev.hotelio.common.mapper.HotelMapper;
+import com.dev.hotelio.hotel.domain.Hotel;
+import com.dev.hotelio.hotel.repository.HotelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,16 +47,9 @@ public class HotelServiceImpl implements HotelService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Hotel not found with id %s:".formatted(hotelId)));
     }
-
-    @Override
-    public PageResponse<HotelResponse> getActiveHotels(Pageable pageable) {
-        Page<Hotel> hotels = hotelRepository.findActiveHotels(pageable);
-        return hotelMapper.toPageResponse(hotels);
-    }
-
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<HotelResponse> searchHotels(HotelSearchRequest request, Pageable pageable) {
+    public PageResponse<HotelResponse> getHotels(HotelSearchRequest request, Pageable pageable) {
 
         HotelSearchCriteria criteria = new HotelSearchCriteria(
                 request.city(),
@@ -62,11 +57,12 @@ public class HotelServiceImpl implements HotelService {
                 request.name(),
                 request.minStarRating(),
                 request.maxStarRating(),
-                request.minPrice(),
-                request.maxPrice()
+                request.roomType(),
+                request.roomCapacity(),
+                request.bedCount()
         );
 
-        Page<Hotel> hotels = hotelRepository.search(criteria, pageable);
+        Page<Hotel> hotels = hotelRepository.findAllHotels(criteria, pageable);
 
         return hotelMapper.toPageResponse(hotels);
     }
