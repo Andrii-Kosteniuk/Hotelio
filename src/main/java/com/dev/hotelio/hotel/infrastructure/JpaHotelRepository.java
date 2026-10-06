@@ -1,7 +1,7 @@
-package com.hotelio.hotel.infrastructure;
+package com.dev.hotelio.hotel.infrastructure;
 
-import com.hotelio.hotel.domain.Hotel;
-import com.hotelio.hotel.domain.HotelStatus;
+import com.dev.hotelio.hotel.domain.Hotel;
+import com.dev.hotelio.hotel.domain.HotelStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

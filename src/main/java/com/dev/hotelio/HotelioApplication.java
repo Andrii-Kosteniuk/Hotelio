@@ -1,4 +1,4 @@
-package com.hotelio;
+package com.dev.hotelio;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

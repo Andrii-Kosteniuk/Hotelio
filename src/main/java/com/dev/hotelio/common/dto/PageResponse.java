@@ -1,4 +1,4 @@
-package com.hotelio.common.dto;
+package com.dev.hotelio.common.dto;
 
 import java.util.List;
 

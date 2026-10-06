@@ -1,4 +1,4 @@
-package com.hotelio.hotel.domain;
+package com.dev.hotelio.hotel.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

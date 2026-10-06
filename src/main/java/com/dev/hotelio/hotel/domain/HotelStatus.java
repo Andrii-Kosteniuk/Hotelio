@@ -1,4 +1,4 @@
-package com.hotelio.hotel.domain;
+package com.dev.hotelio.hotel.domain;
 
 import java.util.Map;
 import java.util.Set;

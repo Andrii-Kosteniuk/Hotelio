@@ -1,8 +1,8 @@
-package com.hotelio.common.exception.advice;
+package com.dev.hotelio.common.exception.advice;
 
 
-import com.hotelio.common.exception.ResourceAlreadyExistsException;
-import com.hotelio.common.exception.ResourceNotFoundException;
+import com.dev.hotelio.common.exception.ResourceAlreadyExistsException;
+import com.dev.hotelio.common.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
