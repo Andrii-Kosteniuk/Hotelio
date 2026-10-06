@@ -1,4 +1,4 @@
-package com.hotelio.common.exception;
+package com.dev.hotelio.common.exception;
 
 
 public class ResourceAlreadyExistsException extends RuntimeException {
