@@ -1,11 +1,11 @@
-package com.hotelio.common.mapper;
+package com.dev.hotelio.common.mapper;
 
-import com.hotelio.common.dto.AddressRequest;
-import com.hotelio.common.dto.CreateHotelRequest;
-import com.hotelio.common.dto.HotelResponse;
-import com.hotelio.common.dto.PageResponse;
-import com.hotelio.hotel.domain.Address;
-import com.hotelio.hotel.domain.Hotel;
+import com.dev.hotelio.common.dto.hotel.HotelAddressRequest;
+import com.dev.hotelio.common.dto.hotel.CreateHotelRequest;
+import com.dev.hotelio.common.dto.hotel.HotelResponse;
+import com.dev.hotelio.common.dto.PageResponse;
+import com.dev.hotelio.hotel.domain.Address;
+import com.dev.hotelio.hotel.domain.Hotel;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Page;
 
@@ -32,12 +32,11 @@ public interface HotelMapper {
                 request.name(),
                 request.description(),
                 toAddress(request.address()),
-                request.starRating(),
-                request.pricePerNight()
+                request.starRating()
         );
     }
 
-    default Address toAddress(AddressRequest request) {
+    default Address toAddress(HotelAddressRequest request) {
         return Address.builder()
                 .country(request.country())
                 .city(request.city())
