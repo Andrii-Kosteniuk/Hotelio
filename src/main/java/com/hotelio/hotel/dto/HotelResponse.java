@@ -1,6 +1,5 @@
-package com.dev.hotelio.common.dto.hotel;
+package com.hotelio.hotel.dto;
 
-import com.dev.hotelio.hotel.domain.Address;
 import java.util.UUID;
 
 public record HotelResponse(
@@ -8,7 +7,7 @@ public record HotelResponse(
         UUID id,
         String name,
         String description,
-        Address address,
+        HotelAddressResponse address,
         Integer starRating
 ) {
 }
