@@ -119,7 +119,7 @@ public class HotelSpecifications {
                     && criteria.checkOut() != null) {
 
                 Subquery<UUID> bookingSubquery =
-                        query.subquery(UUID.class);
+                        subquery.subquery(UUID.class);
 
                 Root<Booking> booking =
                         bookingSubquery.from(Booking.class);
