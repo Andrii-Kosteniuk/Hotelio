@@ -1,7 +1,7 @@
-package com.dev.hotelio.common.dto.hotel;
+package com.hotelio.hotel.dto;
 
 
-import com.dev.hotelio.room.domain.RoomType;
+import com.hotelio.room.dto.RoomSearchCriteria;
 
 public record HotelSearchCriteria(
 
@@ -10,9 +10,7 @@ public record HotelSearchCriteria(
         String name,
         Integer minStarRating,
         Integer maxStarRating,
-        RoomType roomType,
-        Integer roomCapacity,
-        Integer bedCount
+        RoomSearchCriteria roomSearchCriteria
 ) {
 }
 
