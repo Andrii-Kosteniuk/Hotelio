@@ -2,10 +2,17 @@ package com.hotelio.hotel.validation;
 
 import com.hotelio.common.exception.RequestParameterNotValidException;
 import com.hotelio.hotel.dto.HotelSearchRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Clock;
+import java.time.LocalDate;
+
 @Component
+@RequiredArgsConstructor
 public class HotelSearchValidator {
+
+    private final Clock clock;
 
     public void validate(HotelSearchRequest request) {
 
@@ -42,27 +49,29 @@ public class HotelSearchValidator {
         }
     }
 
-    private void validateDateRange(
-            HotelSearchRequest request
-    ) {
-        boolean checkInPresent =
-                request.checkIn() != null;
+    private void validateDateRange(HotelSearchRequest request) {
+        LocalDate checkIn = request.checkIn();
+        LocalDate checkOut = request.checkOut();
 
-        boolean checkOutPresent =
-                request.checkOut() != null;
-
-        if (checkInPresent != checkOutPresent) {
+        if ((checkIn == null) != (checkOut == null)) {
             throw new RequestParameterNotValidException(
                     "Check-in and check-out must be provided together"
             );
         }
 
-        if (checkInPresent
-                && !request.checkOut()
-                .isAfter(request.checkIn())) {
+        if (checkIn == null) {
+            return;
+        }
 
+        if (checkIn.isBefore(LocalDate.now(clock))) {
             throw new RequestParameterNotValidException(
-                    "Check-out must be after check-in"
+                    "Check-in date cannot be in the past"
+            );
+        }
+
+        if (!checkOut.isAfter(checkIn)) {
+            throw new RequestParameterNotValidException(
+                    "Check-out date must be after check-in date"
             );
         }
     }

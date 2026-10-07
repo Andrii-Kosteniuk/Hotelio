@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.UUID;
 
 @Service
@@ -16,6 +16,7 @@ import java.util.UUID;
 public class RoomAvailabilityService {
 
     private final BookingRepository bookingRepository;
+    private final Clock clock;
 
     public boolean isAvailable(UUID roomId, LocalDate checkIn, LocalDate checkOut) {
         validateDateRange(checkIn, checkOut);
@@ -34,24 +35,15 @@ public class RoomAvailabilityService {
             );
         }
 
-        if (!checkOut.isAfter(checkIn)) {
-            throw new RequestParameterNotValidException(
-                    "Check-out date must be after check-in date"
-            );
-        }
-
-
-        LocalDate today = LocalDate.now(ZoneId.systemDefault());
-
-        if (checkIn.isBefore(today)) {
+        if (checkIn.isBefore(LocalDate.now(clock))) {
             throw new RequestParameterNotValidException(
                     "Check-in date cannot be in the past"
             );
         }
 
-        if (checkOut.isBefore(today)) {
+        if (!checkOut.isAfter(checkIn)) {
             throw new RequestParameterNotValidException(
-                    "Check-out date cannot be in the past"
+                    "Check-out date must be after check-in date"
             );
         }
     }
