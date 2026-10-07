@@ -1,19 +1,26 @@
-package com.dev.hotelio.hotel.service;
+package com.hotelio.hotel.service;
 
 
-import com.dev.hotelio.common.dto.PageResponse;
-import com.dev.hotelio.common.dto.hotel.*;
-import com.dev.hotelio.common.exception.ResourceAlreadyExistsException;
-import com.dev.hotelio.common.exception.ResourceNotFoundException;
-import com.dev.hotelio.common.mapper.HotelMapper;
-import com.dev.hotelio.hotel.domain.Hotel;
-import com.dev.hotelio.hotel.repository.HotelRepository;
+import com.hotelio.common.dto.PageResponse;
+import com.hotelio.common.exception.RequestParameterNotValidException;
+import com.hotelio.common.exception.ResourceAlreadyExistsException;
+import com.hotelio.common.exception.ResourceNotFoundException;
+import com.hotelio.hotel.mapper.HotelMapper;
+import com.hotelio.hotel.domain.Hotel;
+import com.hotelio.hotel.dto.CreateHotelRequest;
+import com.hotelio.hotel.dto.HotelResponse;
+import com.hotelio.hotel.dto.HotelSearchCriteria;
+import com.hotelio.hotel.dto.HotelSearchRequest;
+import com.hotelio.hotel.mapper.HotelSearchMapper;
+import com.hotelio.hotel.repository.HotelRepository;
+import com.hotelio.hotel.validation.HotelSearchValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -23,6 +30,8 @@ public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
+    private final HotelSearchMapper searchMapper;
+    private final HotelSearchValidator searchValidator;
 
     @Override
     @Transactional
@@ -47,20 +56,14 @@ public class HotelServiceImpl implements HotelService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Hotel not found with id %s:".formatted(hotelId)));
     }
+
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<HotelResponse> getHotels(HotelSearchRequest request, Pageable pageable) {
+    public PageResponse<HotelResponse> search(HotelSearchRequest request, Pageable pageable) {
 
-        HotelSearchCriteria criteria = new HotelSearchCriteria(
-                request.city(),
-                request.country(),
-                request.name(),
-                request.minStarRating(),
-                request.maxStarRating(),
-                request.roomType(),
-                request.roomCapacity(),
-                request.bedCount()
-        );
+        searchValidator.validate(request);
+
+        HotelSearchCriteria criteria = searchMapper.toCriteria(request);
 
         Page<Hotel> hotels = hotelRepository.findAllHotels(criteria, pageable);
 
