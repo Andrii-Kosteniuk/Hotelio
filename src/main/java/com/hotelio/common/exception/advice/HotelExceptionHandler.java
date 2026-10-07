@@ -74,13 +74,13 @@ public class HotelExceptionHandler {
     public ResponseEntity<ProblemDetail> handleRequestParameterNotValidException(RequestParameterNotValidException exception) {
 
         ProblemDetail problem =
-                ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+                ProblemDetail.forStatus(HttpStatus.CONFLICT);
 
         problem.setTitle("Request parameter not valid");
         problem.setDetail(exception.getMessage());
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.CONFLICT)
                 .body(problem);
     }
 }
