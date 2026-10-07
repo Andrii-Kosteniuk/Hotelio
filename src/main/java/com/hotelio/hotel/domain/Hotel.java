@@ -1,4 +1,4 @@
-package com.dev.hotelio.hotel.domain;
+package com.hotelio.hotel.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,14 +6,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.UUID;
 
 @Entity
-@Table(name = "hotels",
-        indexes = {
-                @Index(name = "idx_hotel_name", columnList = "hotel_name")
-        })
+@Table(name = "hotels")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -65,7 +61,6 @@ public class Hotel {
                 .address(address)
                 .starRating(starRating)
                 .status(HotelStatus.PENDING_REVIEW)
-                .createdAt(OffsetDateTime.now(ZoneId.systemDefault()))
                 .build();
 
     }
