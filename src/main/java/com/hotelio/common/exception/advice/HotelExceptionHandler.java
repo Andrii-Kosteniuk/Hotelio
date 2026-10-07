@@ -1,8 +1,9 @@
-package com.dev.hotelio.common.exception.advice;
+package com.hotelio.common.exception.advice;
 
 
-import com.dev.hotelio.common.exception.ResourceAlreadyExistsException;
-import com.dev.hotelio.common.exception.ResourceNotFoundException;
+import com.hotelio.common.exception.RequestParameterNotValidException;
+import com.hotelio.common.exception.ResourceAlreadyExistsException;
+import com.hotelio.common.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -63,6 +64,20 @@ public class HotelExceptionHandler {
         problem.setTitle("Validation failed");
         problem.setDetail("One or more fields have validation errors.");
         problem.setProperty("errors", errors);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(problem);
+    }
+
+    @ExceptionHandler(RequestParameterNotValidException.class)
+    public ResponseEntity<ProblemDetail> handleRequestParameterNotValidException(RequestParameterNotValidException exception) {
+
+        ProblemDetail problem =
+                ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        problem.setTitle("Request parameter not valid");
+        problem.setDetail(exception.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
