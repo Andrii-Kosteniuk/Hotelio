@@ -2,7 +2,6 @@ package com.hotelio.hotel.service;
 
 
 import com.hotelio.common.dto.PageResponse;
-import com.hotelio.common.exception.RequestParameterNotValidException;
 import com.hotelio.common.exception.ResourceAlreadyExistsException;
 import com.hotelio.common.exception.ResourceNotFoundException;
 import com.hotelio.hotel.mapper.HotelMapper;
@@ -20,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -58,7 +56,6 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public PageResponse<HotelResponse> search(HotelSearchRequest request, Pageable pageable) {
 
         searchValidator.validate(request);
