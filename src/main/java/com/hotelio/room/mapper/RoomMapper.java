@@ -1,7 +1,7 @@
-package com.dev.hotelio.common.mapper;
+package com.hotelio.room.mapper;
 
-import com.dev.hotelio.common.dto.room.RoomResponse;
-import com.dev.hotelio.room.domain.Room;
+import com.hotelio.room.dto.RoomResponse;
+import com.hotelio.room.domain.Room;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -11,4 +11,6 @@ public interface RoomMapper {
     @Mapping(target = "hotelId", source = "hotel.id")
     RoomResponse toRoomResponse(Room room);
 
+    @Mapping(target = "hotel.id", source = "hotelId")
+    Room toRoom(RoomResponse roomResponse);
 }
