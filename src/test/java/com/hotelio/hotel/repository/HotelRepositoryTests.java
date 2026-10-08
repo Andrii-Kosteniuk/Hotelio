@@ -1,5 +1,9 @@
 package com.hotelio.hotel.repository;
 
+import com.hotelio.booking.infrastracture.BookingRepositoryImpl;
+import com.hotelio.booking.model.Booking;
+import com.hotelio.booking.model.BookingStatus;
+import com.hotelio.booking.repository.BookingRepository;
 import com.hotelio.hotel.domain.Address;
 import com.hotelio.hotel.domain.Hotel;
 import com.hotelio.hotel.domain.HotelStatus;
@@ -11,6 +15,7 @@ import com.hotelio.room.domain.RoomType;
 import com.hotelio.room.dto.RoomSearchCriteria;
 import com.hotelio.room.infrastructure.RoomRepositoryImpl;
 import com.hotelio.room.repository.RoomRepository;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -22,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({HotelRepositoryImpl.class, RoomRepositoryImpl.class})
+@Import({HotelRepositoryImpl.class, RoomRepositoryImpl.class, BookingRepositoryImpl.class})
 class HotelRepositoryTests {
 
     private static final Pageable PAGEABLE = PageRequest.of(0, 10);
@@ -39,6 +46,8 @@ class HotelRepositoryTests {
     HotelRepository hotelRepository;
     @Autowired
     RoomRepository roomRepository;
+    @Autowired
+    BookingRepository bookingRepository;
 
     @Test
     void shouldFindHotelById() {
@@ -202,30 +211,13 @@ class HotelRepositoryTests {
     }
 
 
-
     @Test
     void shouldNotMatchWhenRoomFiltersAreSatisfiedByDifferentRooms() {
         // Arrange
         Hotel hotel = createHotel("Hotel 1", HotelStatus.ACTIVE, createTestAddress("Poland", "Wroclaw"), 5);
 
-        Room firstRoom = Room.builder()
-                .hotel(hotel)
-                .type(RoomType.DOUBLE)
-                .status(RoomStatus.ACTIVE)
-                .capacity(2)
-                .bedCount(2)
-                .pricePerNight(new BigDecimal("300.00"))
-                .build();
-
-
-        Room secondRoom = Room.builder()
-                .hotel(hotel)
-                .type(RoomType.SUITE)
-                .status(RoomStatus.ACTIVE)
-                .capacity(4)
-                .bedCount(2)
-                .pricePerNight(new BigDecimal("150.00"))
-                .build();
+        Room firstRoom = createRoom(hotel, RoomType.DOUBLE, RoomStatus.ACTIVE, 4, 2);
+        Room secondRoom = createRoom(hotel, RoomType.SUITE, RoomStatus.INACTIVE, 3, 2);
 
         hotelRepository.save(hotel);
         roomRepository.save(firstRoom);
@@ -259,8 +251,146 @@ class HotelRepositoryTests {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    void shouldMatchWhenRoomBedCountIsSatisfied() {
+        // Arrange
+        Hotel hotel = createHotel("Hotel 1", HotelStatus.ACTIVE, createTestAddress("Poland", "Wroclaw"), 5);
+
+        Room firstRoom = createRoom(hotel, RoomType.DOUBLE, RoomStatus.ACTIVE, 4, 2);
+        Room secondRoom = createRoom(hotel, RoomType.SUITE, RoomStatus.ACTIVE, 3, 1);
+
+        hotelRepository.save(hotel);
+        roomRepository.save(firstRoom);
+        roomRepository.save(secondRoom);
+
+
+        RoomSearchCriteria roomCriteria = new RoomSearchCriteria(
+                null,
+                null,
+                2,
+                null,
+                null,
+                null,
+                null
+        );
+
+        HotelSearchCriteria criteria = new HotelSearchCriteria(
+                null,
+                null,
+                null,
+                null,
+                null,
+                roomCriteria
+        );
+
+        // Act
+        Page<Hotel> result =
+                hotelRepository.findAllHotels(criteria, PAGEABLE);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void shouldMatchWhenMinPriceIsSatisfied() {
+        // Arrange
+        Hotel hotel = createHotel("Hotel 1", HotelStatus.ACTIVE, createTestAddress("Poland", "Wroclaw"), 5);
+
+        Room firstRoom = createRoom(hotel, RoomType.DOUBLE, RoomStatus.ACTIVE, 4, 2);
+        Room secondRoom = createRoom(hotel, RoomType.SUITE, RoomStatus.ACTIVE, 3, 1);
+
+        hotelRepository.save(hotel);
+        roomRepository.save(firstRoom);
+        roomRepository.save(secondRoom);
+
+
+        RoomSearchCriteria roomCriteria = new RoomSearchCriteria(
+                null,
+                null,
+                null,
+                new BigDecimal("150.00"),
+                null,
+                null,
+                null
+        );
+
+        HotelSearchCriteria criteria = new HotelSearchCriteria(
+                null,
+                null,
+                null,
+                null,
+                null,
+                roomCriteria
+        );
+
+        // Act
+        Page<Hotel> result =
+                hotelRepository.findAllHotels(criteria, PAGEABLE);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+    }
+
+    @Test
+    void shouldFindHotelWhenRoomIsAvailableAndSatisfiedCheckInAndCheckOutCriteria() {
+        // Arrange
+        Hotel firstHotel = createHotel("Hotel 1", HotelStatus.ACTIVE, createTestAddress("Poland", "Wroclaw"), 5);
+        Hotel secondHotel = createHotel("Hotel 2", HotelStatus.ACTIVE, createTestAddress("Poland", "Wroclaw"), 2);
+
+        Room notAvailableRoom = createRoom(firstHotel, RoomType.DOUBLE, RoomStatus.ACTIVE, 4, 2);
+        Room availableRoom = createRoom(secondHotel, RoomType.SUITE, RoomStatus.ACTIVE, 3, 1);
+
+        Booking booking = Booking.builder()
+                .room(notAvailableRoom)
+                .checkIn(LocalDate.of(2026, Month.OCTOBER, 8))
+                .checkOut(LocalDate.of(2026, Month.OCTOBER, 10))
+                .status(BookingStatus.PENDING)
+                .totalPrice(BigDecimal.valueOf(2).multiply(BigDecimal.valueOf(150)))
+                .build();
+
+        hotelRepository.save(firstHotel);
+        hotelRepository.save(secondHotel);
+        roomRepository.save(notAvailableRoom);
+        roomRepository.save(availableRoom);
+        bookingRepository.save(booking);
+
+        HotelSearchCriteria criteria = getHotelSearchCriteria();
+
+        // Act
+        Page<Hotel> result =
+                hotelRepository.findAllHotels(criteria, PAGEABLE);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(result.getContent().getFirst().getName(), secondHotel.getName());
+        assertFalse(result.isEmpty());
+    }
+
+    private static @NonNull HotelSearchCriteria getHotelSearchCriteria() {
+        RoomSearchCriteria roomCriteria = new RoomSearchCriteria(
+                null,
+                null,
+                null,
+                null,
+                null,
+                LocalDate.of(2026, Month.OCTOBER, 8),
+                LocalDate.of(2026, Month.OCTOBER, 10)
+        );
+
+        return new HotelSearchCriteria(
+                null,
+                null,
+                null,
+                null,
+                null,
+                roomCriteria
+        );
+    }
+
     private Hotel createHotel(String name, HotelStatus status, Address address, int starRating) {
-        Hotel hotel = Hotel.builder()
+        return Hotel.builder()
                 .name(name)
                 .description("Test hotel description")
                 .status(status)
@@ -268,10 +398,9 @@ class HotelRepositoryTests {
                 .address(createTestAddress(address.getCountry(), address.getCity()))
                 .build();
 
-        return hotelRepository.save(hotel);
     }
 
-    private Address createTestAddress( String country, String city) {
+    private Address createTestAddress(String country, String city) {
         return Address.builder()
                 .country(country)
                 .city(city)
@@ -280,6 +409,18 @@ class HotelRepositoryTests {
                 .buildingNumber(10)
                 .zipCode("34-500")
                 .build();
+    }
+
+    private Room createRoom(Hotel hotel, RoomType type, RoomStatus status, int capacity, Integer bedCount) {
+        return Room.builder()
+                .hotel(hotel)
+                .type(type)
+                .status(status)
+                .capacity(capacity)
+                .bedCount(bedCount)
+                .pricePerNight(new BigDecimal("300.00"))
+                .build();
+
     }
 
     private HotelSearchCriteria emptyCriteria() {
