@@ -5,7 +5,6 @@ import com.hotelio.hotel.domain.HotelStatus;
 import com.hotelio.hotel.dto.HotelSearchCriteria;
 import com.hotelio.hotel.repository.HotelRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,7 +32,7 @@ public class HotelRepositoryImpl implements HotelRepository {
 
     @Override
     public boolean existsByName(String name) {
-        return repository.exists(Example.of(Hotel.builder().name(name).build()));
+        return repository.existsByName(name);
     }
 
     @Override
