@@ -58,6 +58,9 @@ public class Booking {
     @Column(nullable = false, length = 30)
     private BookingStatus status;
 
+    @Column(nullable = false)
+    private UUID idempotencyKey;
+
     public static Booking createPending(
             Room room,
             LocalDate checkIn,
