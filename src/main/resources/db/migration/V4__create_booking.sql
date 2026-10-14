@@ -1,17 +1,17 @@
 CREATE TABLE bookings
 (
-    id          UUID PRIMARY KEY,
+    id              UUID PRIMARY KEY,
 
-    room_id     UUID           NOT NULL,
+    room_id         UUID           NOT NULL,
 
-    check_in    DATE           NOT NULL,
-    check_out   DATE           NOT NULL,
-    guests      INT            NOT NULL,
-    status      VARCHAR(30)    NOT NULL,
-    total_price NUMERIC(12, 2) NOT NULL,
+    check_in        DATE           NOT NULL,
+    check_out       DATE           NOT NULL,
+    guests          INT            NOT NULL,
+    status          VARCHAR(30)    NOT NULL,
+    total_price     NUMERIC(12, 2) NOT NULL,
+    idempotency_key UUID           NOT NULL,
 
-    CONSTRAINT fk_bookings_room
-        FOREIGN KEY (room_id)
+        CONSTRAINT fk_bookings_room FOREIGN KEY (room_id)
             REFERENCES rooms (room_id)
             ON DELETE RESTRICT,
 
