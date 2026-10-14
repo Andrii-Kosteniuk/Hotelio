@@ -4,6 +4,7 @@ import com.hotelio.hotel.domain.Hotel;
 import com.hotelio.hotel.domain.HotelStatus;
 import com.hotelio.hotel.dto.HotelSearchCriteria;
 import com.hotelio.hotel.repository.HotelRepository;
+import com.hotelio.room.dto.RoomSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,9 +66,12 @@ public class HotelRepositoryImpl implements HotelRepository {
                     .and(HotelSpecifications.maxStarRating(criteria.maxStarRating()));
         }
 
-        if (criteria.roomSearchCriteria() != null) {
-            specification = specification
-                    .and(HotelSpecifications.hasMatchingRoom(criteria.roomSearchCriteria()));
+        RoomSearchCriteria roomCriteria = criteria.roomSearchCriteria();
+
+        if (roomCriteria != null && roomCriteria.hasFilters()) {
+            specification = specification.and(
+                    HotelSpecifications.hasMatchingRoom(roomCriteria)
+            );
         }
 
         return repository.findAll(specification, pageable);
