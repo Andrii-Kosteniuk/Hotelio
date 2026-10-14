@@ -14,4 +14,6 @@ public interface BookingRepository {
             LocalDate checkIn,
             LocalDate checkOut
     );
+
+    boolean existsByIdempotencyKey(UUID key);
 }

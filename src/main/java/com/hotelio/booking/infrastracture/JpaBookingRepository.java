@@ -27,4 +27,6 @@ public interface JpaBookingRepository extends JpaRepository<Booking, UUID> {
             @Param("blockingStatuses") Collection<BookingStatus> blockingStatuses
     );
 
+    boolean existsByIdempotencyKey(UUID key);
+
 }

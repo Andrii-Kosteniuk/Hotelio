@@ -30,4 +30,9 @@ public class BookingRepositoryImpl implements BookingRepository {
     public boolean existsOverlappingBooking(UUID roomId, LocalDate checkIn, LocalDate checkOut) {
         return repository.existsOverlappingBooking(roomId, checkIn, checkOut, BLOCKING_STATUSES);
     }
+
+    @Override
+    public boolean existsByIdempotencyKey(UUID key) {
+        return repository.existsByIdempotencyKey(key);
+    }
 }
