@@ -1,6 +1,7 @@
 package com.hotelio.hotel.controller;
 
 import com.hotelio.common.dto.PageResponse;
+import com.hotelio.hotel.domain.HotelStatus;
 import com.hotelio.hotel.dto.*;
 import com.hotelio.hotel.service.HotelService;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class HotelControllerTests {
         UUID hotelId = UUID.randomUUID();
 
         var request = new CreateHotelRequest("Hotel 1", "Some description", createHotelAddressRequest(), 5);
-        var response = new HotelResponse(hotelId, "Hotel 1", "Some description", createHotelAddressResponseWithCity("Wroclaw"), 5);
+        var response = new HotelResponse(hotelId, "Hotel 1", "Some description", createHotelAddressResponseWithCity("Wroclaw"), 5, HotelStatus.PENDING_REVIEW);
 
         when(hotelService.createHotel(request)).thenReturn(response);
 
@@ -57,7 +58,7 @@ class HotelControllerTests {
     void testGetHotelById() throws Exception {
         UUID hotelId = UUID.randomUUID();
 
-        var response = new HotelResponse(hotelId, "Hotel 1", "Some description", createHotelAddressResponseWithCity("Warshaw"), 5);
+        var response = new HotelResponse(hotelId, "Hotel 1", "Some description", createHotelAddressResponseWithCity("Warshaw"), 5, HotelStatus.PENDING_REVIEW);
 
         when(hotelService.getHotel(hotelId)).thenReturn(response);
 
@@ -75,7 +76,7 @@ class HotelControllerTests {
 
         Pageable pageable = PageRequest.of(0, 20, Sort.by("name").ascending());
         var request = makeHotelSearchRequestWitCity("Wroclaw");
-        var response = new HotelResponse(hotelId, "Hotel 1", "Some description", createHotelAddressResponseWithCity("Wroclaw"), 5);
+        var response = new HotelResponse(hotelId, "Hotel 1", "Some description", createHotelAddressResponseWithCity("Wroclaw"), 5, HotelStatus.PENDING_REVIEW);
 
         PageResponse<HotelResponse> expectedResponse =
                 new PageResponse<>(List.of(response), 0, 20, 1, 1, true, true);

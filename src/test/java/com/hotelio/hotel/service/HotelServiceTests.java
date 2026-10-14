@@ -252,7 +252,9 @@ class HotelServiceTests {
                 "Hotel 1",
                 "Hotel description",
                 createHotelAddressResponse(),
-                5);
+                5,
+                HotelStatus.PENDING_REVIEW
+                );
     }
 
     private CreateHotelRequest getHotelRequest() {
