@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class RoomController {
 
     private final RoomService roomService;
 
-    @PostMapping("/hotels/{hotelId}/rooms")
+    @PostMapping("/rooms/{hotelId}")
     public ResponseEntity<RoomResponse> createRoom(@PathVariable UUID hotelId, @Valid @RequestBody CreateRoomRequest request) {
 
         return ResponseEntity
