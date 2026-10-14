@@ -37,6 +37,12 @@ public class BookingServiceImpl implements BookingService {
         UUID roomId = bookingRequest.roomId();
         LocalDate checkIn = bookingRequest.checkIn();
         LocalDate checkOut = bookingRequest.checkOut();
+        UUID idempotencyKey = bookingRequest.idempotencyKey();
+
+        boolean bookingDuplication = checkBookingDuplication(idempotencyKey);
+        if (bookingDuplication) {
+            throw new RequestParameterNotValidException("This reservation already created");
+        }
 
         boolean available = roomAvailabilityService.isAvailable(roomId, checkIn, checkOut);
 
@@ -79,6 +85,10 @@ public class BookingServiceImpl implements BookingService {
                     "Number of guests exceeds room capacity"
             );
         }
+    }
+
+    private boolean checkBookingDuplication(UUID key) {
+       return bookingRepository.existsByIdempotencyKey(key);
     }
 
     private BigDecimal calculateTotalPrice(Room room, LocalDate checkIn, LocalDate checkOut) {
