@@ -10,8 +10,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.UUID;
 
-public interface JpaBookingRepository
-        extends JpaRepository<Booking, UUID> {
+public interface JpaBookingRepository extends JpaRepository<Booking, UUID> {
 
     @Query("""
             SELECT CASE WHEN COUNT(b) > 0 THEN true ELSE false END

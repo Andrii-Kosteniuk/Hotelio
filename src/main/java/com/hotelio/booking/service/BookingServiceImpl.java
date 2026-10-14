@@ -46,20 +46,9 @@ public class BookingServiceImpl implements BookingService {
             );
         }
 
+        Room room = getRoomById(roomId);
 
-        Room room = roomRepository.findById(roomId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Room with id '%s' was not found"
-                                        .formatted(roomId)
-                        )
-                );
-
-        if (bookingRequest.guests() > room.getCapacity()) {
-            throw new RequestParameterNotValidException(
-                    "Number of guests exceeds room capacity"
-            );
-        }
+        checkIfGuestsNumberIsRelevant(bookingRequest, room);
 
         BigDecimal totalPrice = calculateTotalPrice(room, checkIn, checkOut);
 
@@ -72,6 +61,24 @@ public class BookingServiceImpl implements BookingService {
 
         Booking savedBooking = bookingRepository.save(booking);
         return bookingMapper.toBookingResponse(savedBooking);
+    }
+
+    private Room getRoomById(UUID roomId) {
+        return roomRepository.findById(roomId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Room with id '%s' was not found"
+                                        .formatted(roomId)
+                        )
+                );
+    }
+
+    private static void checkIfGuestsNumberIsRelevant(CreateBookingRequest bookingRequest, Room room) {
+        if (bookingRequest.guests() > room.getCapacity()) {
+            throw new RequestParameterNotValidException(
+                    "Number of guests exceeds room capacity"
+            );
+        }
     }
 
     private BigDecimal calculateTotalPrice(Room room, LocalDate checkIn, LocalDate checkOut) {
