@@ -9,6 +9,9 @@ import java.util.UUID;
 public record CreateBookingRequest(
 
         @NotNull
+        UUID idempotencyKey,
+
+        @NotNull
         UUID roomId,
 
         @NotNull
