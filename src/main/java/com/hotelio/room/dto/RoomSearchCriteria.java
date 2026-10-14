@@ -15,4 +15,14 @@ public record RoomSearchCriteria(
         LocalDate checkIn,
         LocalDate checkOut
 ) {
+
+    public boolean hasFilters() {
+        return type != null
+                || guests != null
+                || bedCount != null
+                || minPrice != null
+                || maxPrice != null
+                || checkIn != null
+                || checkOut != null;
+    }
 }
