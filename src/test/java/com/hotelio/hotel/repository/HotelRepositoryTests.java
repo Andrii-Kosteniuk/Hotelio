@@ -342,12 +342,14 @@ class HotelRepositoryTests {
         Room notAvailableRoom = createRoom(firstHotel, RoomType.DOUBLE, RoomStatus.ACTIVE, 4, 2);
         Room availableRoom = createRoom(secondHotel, RoomType.SUITE, RoomStatus.ACTIVE, 3, 1);
 
+        UUID idempotencyKey = UUID.randomUUID();
         Booking booking = Booking.builder()
                 .room(notAvailableRoom)
                 .checkIn(LocalDate.of(2026, Month.OCTOBER, 8))
                 .checkOut(LocalDate.of(2026, Month.OCTOBER, 10))
                 .status(BookingStatus.PENDING)
                 .totalPrice(BigDecimal.valueOf(2).multiply(BigDecimal.valueOf(150)))
+                .idempotencyKey(idempotencyKey)
                 .build();
 
         hotelRepository.save(firstHotel);
